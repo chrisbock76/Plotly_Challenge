@@ -4,15 +4,25 @@ function buildCharts(id) {
 
     //Use D3 to retrieve data from json file
     d3.json("samples.json").then(function(data) {
+        //set a samples variable filtering the data by id within the samples dataset
+        //id is a string in the samples dataset, push the input in names id to a string
         var samples = data.samples.filter(d => d.id.toString() === id)[0];
         console.log(samples);
-        
+
+        //set a wash frequency variable filtering the data by id within the metadata dataset
+        var wFreq = data.metadata.filter(d => d.id.toString() === id).map(d => d.wfreq);
+        console.log(wFreq);
+
+        //set the sampleValues variable, slice the top 10 responses and reverse the data for the plot
         var sampleValues = samples.sample_values.slice(0,10).reverse();
         console.log(sampleValues);
 
+        //set the OTU_ID variable, slice the top 10 responses and reverse the data for the plot
+        //use map to add "OTU" to the newly created OTU_ID array
         var OTU_ID = samples.otu_ids.slice(0,10).reverse().map(d => "OTU " + d);
         console.log(OTU_ID);
 
+        //set the OTU_Type variable, slice the top 10 response and reverse the data for the plot
         var OTU_Type = samples.otu_labels.slice(0,10).reverse();
         console.log(OTU_Type);
 
@@ -63,6 +73,37 @@ function buildCharts(id) {
         };
 
         Plotly.newPlot("bubble", data2, layout2);
+
+        //Create the data set for the gauge chart using wfreq (wash frequency)
+        var data3 = [
+          {
+          domain: { x: [0, 1], y: [0, 1] },
+          value: parseFloat(wFreq),
+          title: { text: `Weekly Washing Frequency ` },
+          type: "indicator",
+          mode: "gauge+number",
+          gauge: { axis: { range: [null, 9] },
+                  bar: {color: "rgb(230,100,0)"},
+                   steps: [
+                    { range: [0, 2], color: "rgb(240,230,215)" },
+                    { range: [2, 4], color: "rgb(210,206,145)" },
+                    { range: [4, 6], color: "rgb(170,202,42)" },
+                    { range: [6, 8], color: "rgb(14,150,13)" },
+                    { range: [8, 9], color: "rgb(0,105,11)" },
+                  ]}
+              
+          }
+        ];
+        
+        //create the gauge chart
+        var layout3 = { 
+            width: 700, 
+            height: 600, 
+            margin: { t: 20, b: 40, l:100, r:100 } 
+          };
+      
+        Plotly.newPlot("gauge", data3, layout3);
+
     });
 };
 
@@ -83,12 +124,13 @@ function updateDemographics(id) {
   });
 }
 
+//Create a function to update the plots once a new id is selected from the dropdown
 function optionChanged(id) {
   buildCharts(id);
   updateDemographics(id);
 }
 
-// create the function for the initial data rendering
+// create the function for the initial data rendering on the page
 function init() {
   // select dropdown menu 
   var dropdown = d3.select("#selDataset");
@@ -108,4 +150,5 @@ function init() {
   });
 }
 
+//call the init function to initialize the page
 init();
