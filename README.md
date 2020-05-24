@@ -18,5 +18,11 @@ static/js folder contains:
 
 
 ## Observations
+"In this assignment, an interactive dashboard was built to explore the Belly Button Biodiversity dataset, which catalogs the microbes that colonize human navels.
+
+The dataset reveals that a small handful of microbial species (also called operational taxonomic units, or OTUs, in the study) were present in more than 70% of people, while the rest were relatively rare."
+
+When reviewing a handful of patients, there does not appear to be a correlation between washing frequency and the number or type of microbes that exist in a person's belly button
+
 
 
